@@ -1,5 +1,21 @@
 apply plugin: 'com.android.application'
 
+// Release signing: android/keystore.properties first, then LANG_COMBAT_* env vars.
+// If neither is complete, the release build is left unsigned (debug/CI still work).
+def keystoreProps = new Properties()
+def keystorePropsFile = rootProject.file('keystore.properties')
+if (keystorePropsFile.exists()) {
+    keystorePropsFile.withInputStream { keystoreProps.load(it) }
+}
+def signingValue = { String prop, String envName ->
+    keystoreProps.getProperty(prop) ?: System.getenv(envName)
+}
+def releaseStoreFile = signingValue('storeFile', 'LANG_COMBAT_KEYSTORE')
+def releaseStorePassword = signingValue('storePassword', 'LANG_COMBAT_KEYSTORE_PASSWORD')
+def releaseKeyAlias = signingValue('keyAlias', 'LANG_COMBAT_KEY_ALIAS')
+def releaseKeyPassword = signingValue('keyPassword', 'LANG_COMBAT_KEY_PASSWORD')
+def hasReleaseSigning = releaseStoreFile && releaseStorePassword && releaseKeyAlias && releaseKeyPassword
+
 android {
     namespace = "org.selak.langcombat"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -16,8 +32,22 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (hasReleaseSigning) {
+                // Relative paths resolve against android/app/
+                storeFile file(releaseStoreFile)
+                storePassword releaseStorePassword
+                keyAlias releaseKeyAlias
+                keyPassword releaseKeyPassword
+            }
+        }
+    }
     buildTypes {
         release {
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

@@ -31,3 +31,5 @@ android/app/release/
 
 # Agent scratch
 .claude/temp/
+
+release-keys/
