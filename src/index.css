@@ -1,0 +1,191 @@
+:root {
+  --bg: #111;
+  --panel: #181a1f;
+  --fg: #ddd;
+  --dim: #8a8f98;
+  --input: #7fd68a;
+  --grammar: #f0a63a;
+  --game: #a89f94;
+  --hint: #5fd3e8;
+  --win: #ffd84d;
+  --chip-bg: #262a33;
+  --chip-border: #3a404d;
+  --accent: #4a90d9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: ui-monospace, Consolas, monospace;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-width: 100vw;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.loading {
+  align-items: center;
+  justify-content: center;
+  color: var(--dim);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--chip-border);
+}
+
+.title {
+  font-size: 14px;
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+button {
+  font: inherit;
+  color: var(--fg);
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.newgame {
+  min-height: 36px;
+  padding: 0 10px;
+  font-size: 13px;
+  background: transparent;
+  border: 1px solid var(--chip-border);
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.log {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 10px;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.entry {
+  margin: 0 0 10px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.entry-input {
+  color: var(--input);
+  font-weight: bold;
+}
+.entry-grammarError {
+  color: var(--grammar);
+}
+.entry-gameError {
+  color: var(--game);
+}
+.entry-hint {
+  color: var(--hint);
+  font-style: italic;
+}
+.entry-win {
+  color: var(--win);
+  font-weight: bold;
+  border: 1px solid var(--win);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.controls {
+  border-top: 1px solid var(--chip-border);
+  background: var(--panel);
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-height: 124px;
+  overflow-y: auto;
+}
+
+.chip {
+  min-height: 36px;
+  min-width: 36px;
+  padding: 0 10px;
+  font-size: 14px;
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-border);
+  border-radius: 6px;
+}
+
+.chip-verb {
+  color: var(--input);
+}
+.chip-dir {
+  color: var(--hint);
+}
+.chip-help {
+  color: var(--grammar);
+}
+
+.inputrow {
+  display: flex;
+  gap: 6px;
+}
+
+.inputrow input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 10px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--chip-border);
+  border-radius: 6px;
+}
+
+.inputrow input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.send {
+  min-width: 48px;
+  min-height: 44px;
+  font-size: 20px;
+  background: var(--accent);
+  border: none;
+  border-radius: 6px;
+}
