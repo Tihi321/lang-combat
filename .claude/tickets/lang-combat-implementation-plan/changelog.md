@@ -1,5 +1,41 @@
 # Changelog — lang-combat-implementation-plan
 
+## 2026-10-14 — Phase 4: Android
+
+The signed release `.aab` builds, and the app runs on the Android emulator. The real-device run and the Play Console upload are still open.
+
+**Environment:** Microsoft OpenJDK 21.0.12 and Android Studio 2026.2.1.8 were installed with winget. The user installed the Android SDK through the Studio setup wizard and generated the upload keystore (`release-keys/lang-combat-upload.jks`, alias `upload`). Both the keystore and `android/keystore.properties` are gitignored.
+
+**Files (commit 19bf6d9, plus a follow-up commit)**
+- `android/app/build.gradle`: the release signing config reads `android/keystore.properties` first, then the `LANG_COMBAT_*` env vars. It is applied only when all four values are present.
+- `android/keystore.properties.example`, `.gitignore` (`release-keys/`), `.gitattributes` (gradlew LF, .bat CRLF, binaries).
+- `package.json`:
+  - New scripts `android:sync`, `android:bundle` and `android:run`.
+  - New dev dependencies `@capacitor/assets` and `sharp`.
+- `scripts/gradle.mjs`: a cross-platform Gradle wrapper. The follow-up commit makes it call `gradlew.bat` by absolute path, because cmd with `NoDefaultCurrentDirectoryInExePath=1` does not search the working directory.
+- `scripts/make-icons.mjs` and `assets/*`: the placeholder "LC" icon and splash (#111 background, #4a90d9 text). The Android mipmap and splash resources were regenerated with `@capacitor/assets`.
+- `docs/android-release.md` and `README.md`: release steps, plus a fallback for `cap run` in shells where it cannot find `gradlew`.
+
+**Verification**
+- `npm run android:bundle`: BUILD SUCCESSFUL. It produced `android/app/build/outputs/bundle/release/app-release.aab` (3.2 MB).
+- `jarsigner -verify`: "jar verified", signed by CN=Tihomir Selak.
+- `node scripts/gradle.mjs installDebug` on emulator `Medium_Phone_API_37.0` (API 37):
+  - The app starts.
+  - Commands typed on the soft keyboard work, e.g. NotTakeable on `Nimm den Tisch`.
+  - Entering a room prints its description.
+  - The layout shrinks correctly above the keyboard.
+- `npm test` (78/78), `npm run build` and `npm run lint` pass.
+- Not done: a run on a real device, and the upload to Play Console internal testing, which is the user's action.
+
+**Known limitations / follow-ups**
+- The Android status bar is light while the app is dark. `@capacitor/status-bar` could fix that.
+- The word-chip area has a fixed height, so the 4th row (ein/eine/einen/Hilfe) only shows after scrolling.
+- `npx cap run android` fails in this agent shell because of `NoDefaultCurrentDirectoryInExePath`. The docs have the workaround.
+- `npm audit` reports issues in transitive dependencies. These were not checked.
+- Gradle warns about deprecated features (Gradle 9 compatibility); these come from the Capacitor template.
+
+**Commit status:** committed on `lang-combat-implementation`, not pushed.
+
 ## 2026-10-14 — Phase 3: UI
 
 Floor 1 can be played from start to finish in the browser on a phone-sized viewport. The game state persists across a page reload. 78 tests.
