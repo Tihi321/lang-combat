@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { FLOOR1, initialState, step } from '../src/core/engine'
+import { FLOOR1, initialState, step, visibleNouns } from '../src/core/engine'
 import type { GameEvent, GameState } from '../src/core/engine'
 import { hintFor } from '../src/core/hints'
 import { FLOOR1_LEXICON } from '../src/core/lexicon'
@@ -34,6 +34,19 @@ describe('walkthrough', () => {
     expect(events.map((e) => e.type)).toEqual(['text', 'win'])
     expect(state.flags[FLOOR1.goalFlag]).toBe(true)
     expect(state.inventory).toEqual(['schluessel'])
+  })
+
+  it('entering a room describes it', () => {
+    const { events } = run(toFlur)
+    expect(events.map(textOf)).toEqual([
+      'Du gehst nach Norden.',
+      expect.stringContaining('Flur'),
+    ])
+  })
+
+  it('opening a container shows what is inside', () => {
+    const { events } = run([...toSalon, 'Öffne die Truhe'])
+    expect(events.map(textOf)).toEqual(['Du öffnest die Truhe.', 'Darin siehst du den Schlüssel.'])
   })
 
   it('Schau lists room, visible entities and exits', () => {
@@ -182,5 +195,20 @@ describe('level data', () => {
       if (e.opensWith) expect(ids).toContain(e.opensWith)
       if (e.inside) expect(ids).toContain(e.inside)
     }
+  })
+})
+
+describe('visibleNouns', () => {
+  it('lists room nouns, hides container contents, includes inventory', () => {
+    const start = initialState(FLOOR1)
+    expect(visibleNouns(FLOOR1, start)).toContain('Tisch')
+    expect(visibleNouns(FLOOR1, start)).not.toContain('Buch')
+    const inSalon = run([...toSalon])
+    expect(visibleNouns(FLOOR1, inSalon.state)).toContain('Truhe')
+    expect(visibleNouns(FLOOR1, inSalon.state)).not.toContain('Schlüssel')
+    const opened = run(['Öffne die Truhe', 'Nimm den Schlüssel'], inSalon.state)
+    const away = run(['Geh nach Westen'], opened.state)
+    expect(visibleNouns(FLOOR1, away.state)).toContain('Schlüssel')
+    expect(visibleNouns(FLOOR1, away.state)).not.toContain('Truhe')
   })
 })

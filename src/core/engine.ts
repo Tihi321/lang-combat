@@ -76,6 +76,11 @@ function visibleEntities(level: Level, s: GameState): Entity[] {
 const inRoom = (level: Level, s: GameState) =>
   visibleEntities(level, s).filter((e) => !s.inventory.includes(e.id))
 
+/** Noun lemmas visible in the current room plus the inventory. */
+export function visibleNouns(level: Level, state: GameState): string[] {
+  return visibleEntities(level, state).map((e) => e.noun)
+}
+
 const text = (t: string): GameEvent => ({ type: 'text', text: t })
 function fail<K extends GameErrorKind>(state: GameState, kind: K, args: GameErrorArgs[K]): StepResult {
   return { state, events: [{ type: 'gameError', kind, text: gameErrorText(kind, args) }] }
@@ -114,10 +119,8 @@ function go(level: Level, state: GameState, direction: Direction): StepResult {
   const room = level.rooms.find((r) => r.id === state.roomId)
   const target = room?.exits[direction]
   if (!target) return fail(state, 'NoExit', { direction })
-  return {
-    state: { ...state, roomId: target },
-    events: [text(texts.moved(direction))],
-  }
+  const next = { ...state, roomId: target }
+  return { state: next, events: [text(texts.moved(direction)), ...look(level, next).events] }
 }
 
 function act(level: Level, state: GameState, cmd: Extract<Command, { kind: 'act' }>): StepResult {
@@ -182,6 +185,8 @@ function open(level: Level, state: GameState, e: Entity): StepResult {
 
   const next = { ...state, flags }
   const events: GameEvent[] = [text(line)]
+  const contents = level.entities.filter((c) => c.inside === e.id && !state.inventory.includes(c.id))
+  if (contents.length > 0) events.push(text(texts.inside(contents.map((c) => c.noun))))
   if (flags[level.goalFlag]) events.push({ type: 'win', text: texts.win })
   return { state: next, events }
 }
