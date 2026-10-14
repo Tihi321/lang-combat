@@ -44,6 +44,11 @@ Start an emulator (Android Studio Device Manager) or plug in a device with USB d
 ```
 npm run android:run      # = sync + npx cap run android
 ```
+If `cap run` fails with `'gradlew' is not recognized` (shells with `NoDefaultCurrentDirectoryInExePath=1`), install and launch directly:
+```
+npm run android:sync && node scripts/gradle.mjs installDebug
+adb shell am start -n org.selak.langcombat/.MainActivity
+```
 
 ## 5. Upload to Play Console (internal testing)
 1. Create the app in Play Console with package `org.selak.langcombat`.
