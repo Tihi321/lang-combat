@@ -1,0 +1,34 @@
+{
+  "start": "kueche",
+  "goalFlag": "open:tuer",
+  "intro": "Du wachst in einem alten Haus auf. Eine mürrische Stimme brummt: „Ich bin der Hausgeist. Sprich deutlich, ich höre schlecht! Finde den Schlüssel und öffne die Tür.“ (Tipp: Schreibe „Hilfe“, wenn du nicht weiterkommst.)",
+  "rooms": [
+    {
+      "id": "kueche",
+      "description": "Du stehst in einer kleinen Küche. Es riecht nach Rauch und altem Brot.",
+      "exits": { "north": "flur" }
+    },
+    {
+      "id": "flur",
+      "description": "Du bist in einem dunklen Flur. Es ist kalt, und es zieht.",
+      "exits": { "south": "kueche", "east": "salon" }
+    },
+    {
+      "id": "salon",
+      "description": "Du bist im Salon. Hier ist es still und staubig.",
+      "exits": { "west": "flur" }
+    }
+  ],
+  "entities": [
+    { "id": "tisch", "noun": "Tisch", "room": "kueche", "description": "Der Tisch ist alt und wackelig. Er ist viel zu schwer zum Tragen.", "takeable": false },
+    { "id": "kerze", "noun": "Kerze", "room": "kueche", "description": "Die Kerze ist kurz, aber sie brennt noch.", "takeable": true },
+    { "id": "kamin", "noun": "Kamin", "room": "kueche", "description": "Der Kamin ist schwarz vom Ruß. Darin brennt das Feuer.", "takeable": false },
+    { "id": "feuer", "noun": "Feuer", "room": "kueche", "description": "Das Feuer knistert leise und wärmt die Küche.", "takeable": false },
+    { "id": "tuer", "noun": "Tür", "room": "flur", "description": "Die Tür ist groß und aus dickem Holz. Das Schloss ist zu.", "takeable": false, "openable": true, "locked": true, "opensWith": "schluessel" },
+    { "id": "regal", "noun": "Regal", "room": "flur", "description": "Das Regal ist leer, nur Staub liegt darauf.", "takeable": false },
+    { "id": "buch", "noun": "Buch", "room": "flur", "description": "Das Buch ist dick und alt. Auf der ersten Seite steht: „Die Truhe im Salon hütet den Schlüssel.“", "takeable": true },
+    { "id": "sessel", "noun": "Sessel", "room": "salon", "description": "Der Sessel ist weich, aber voller Staub.", "takeable": false },
+    { "id": "truhe", "noun": "Truhe", "room": "salon", "description": "Die Truhe ist aus Eisen und sehr schwer.", "takeable": false, "openable": true },
+    { "id": "schluessel", "noun": "Schlüssel", "room": "salon", "description": "Der Schlüssel ist klein und kalt. Er passt bestimmt zur Tür.", "takeable": true, "inside": "truhe" }
+  ]
+}

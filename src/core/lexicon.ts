@@ -38,5 +38,8 @@ export const FLOOR1_LEXICON: Lexicon = {
     { lemma: 'Tisch', gender: 'm' },
     { lemma: 'Truhe', gender: 'f' },
     { lemma: 'Feuer', gender: 'n' },
+    { lemma: 'Kamin', gender: 'm' },
+    { lemma: 'Regal', gender: 'n' },
+    { lemma: 'Sessel', gender: 'm' },
   ],
 }
